@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>七和弦泛音音準練習｜TCMC</title>
+<title>泛音三度音準練習｜TCMC</title>
 <style>
   :root{
     --charcoal:#2E3A3F;
@@ -11,7 +11,6 @@
     --charcoal-3:#20292D;
     --teal:#0B6E6E;
     --teal-bright:#2FBFAA;
-    --teal-soft:#8FD9C8;
     --gold:#E8A33D;
     --green:#33D17A;
     --amber:#F2B84B;
@@ -122,7 +121,7 @@
 
   canvas{width:100%;height:260px;display:block;border-radius:10px;}
   @media (max-width:640px){
-    canvas{height:220px;}
+    canvas{height:200px;}
     .wrap{padding:14px 10px 32px;}
     .card{padding:12px 14px;margin-bottom:10px;}
     h1{font-size:20px;}
@@ -133,12 +132,11 @@
     .btn{padding:10px 14px;font-size:13.5px;}
     .readout{gap:10px;}
     .readout .item b{font-size:16px;}
-    .legend{gap:8px 12px;font-size:11px;}
   }
 
-  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;font-size:12px;color:var(--muted);}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12px;color:var(--muted);}
   .legend span{display:inline-flex;align-items:center;gap:6px;}
-  .swatch{width:16px;height:3px;border-radius:2px;display:inline-block;flex:none;}
+  .swatch{width:16px;height:3px;border-radius:2px;display:inline-block;}
 
   .note{
     font-size:12.5px;color:var(--muted);line-height:1.7;margin-top:4px;
@@ -157,18 +155,18 @@
       <div class="eyebrow" id="txtEyebrow">TCMC · Harmony Ears</div>
       <button class="lang-btn" id="btnLang" onclick="toggleLang()">EN</button>
     </div>
-    <h1 id="txtH1">七和弦泛音音準練習</h1>
-    <div class="sub" id="subHeader">大七和弦・純律（Just Intonation）— 依序聽根音、泛音三音（−13.7¢）、泛音五音（+2¢），再聽泛音大七度目標（−11.7¢），接著開口唱七音，看即時音高線能否對齊七音的目標粗線。容忍度 ±6 音分。</div>
+    <h1 id="txtH1">泛音三度音準練習</h1>
+    <div class="sub" id="subHeader">大三和弦・純律（Just Intonation）— 先聽根音與泛音五音（+2¢）的兩部和聲，再聽泛音三音目標（−13.7¢），接著開口唱三音，看即時音高線能否對齊三音的目標粗線。容忍度 ±6 音分。</div>
   </header>
 
   <div class="card">
-    <h2 id="txtChordTypeHeader">和弦類型</h2>
+    <h2 id="txtThirdTypeHeader">三度類型</h2>
     <div class="voice-toggle">
-      <button class="voice-btn active" id="chordMajor7" onclick="setChordType('major7')">
-        <span id="txtChordMajor7Label">大七和弦</span><small id="txtChordMajor7Small">純律 15:8 ／ −11.7¢</small>
+      <button class="voice-btn active" id="thirdMajor" onclick="setThirdType('major')">
+        <span id="txtThirdMajorLabel">大三度</span><small id="txtThirdMajorSmall">純律 5:4 ／ −13.7¢</small>
       </button>
-      <button class="voice-btn" id="chordDominant7" onclick="setChordType('dominant7')">
-        <span id="txtChordDominant7Label">屬七和弦</span><small id="txtChordDominant7Small">純律 7:4 ／ −31.2¢</small>
+      <button class="voice-btn" id="thirdMinor" onclick="setThirdType('minor')">
+        <span id="txtThirdMinorLabel">小三度</span><small id="txtThirdMinorSmall">純律 6:5 ／ +15.6¢</small>
       </button>
     </div>
     <h2 style="margin-top:12px;" id="txtVoiceHeader">聲部</h2>
@@ -192,15 +190,15 @@
     <div class="transport">
       <button class="btn btn-primary" id="btnStart" onclick="startSequence()">▶ 開始</button>
       <button class="btn btn-stop" id="btnStop" onclick="stopAll()" disabled>■ 停止</button>
-      <button class="btn btn-ghost" id="btnChordToggle" onclick="toggleChord()" disabled>▶ 播放和弦</button>
-      <button class="btn btn-ghost" id="btnSeventhToggle" onclick="toggleSeventh()" disabled>▶ 播放七音</button>
+      <button class="btn btn-ghost" id="btnChordToggle" onclick="toggleChord()" disabled>▶ 播放三和弦</button>
+      <button class="btn btn-ghost" id="btnThirdToggle" onclick="toggleThird()" disabled>▶ 播放三音</button>
       <button class="btn btn-ghost" id="btnMicToggle" onclick="toggleMic()" disabled>🎤 開啟麥克風</button>
       <div class="status-line">
         <span class="dot" id="micDot"></span>
         <span id="micText">麥克風未啟用</span>
       </div>
     </div>
-    <div class="seq-status" id="seqStatus">按「開始」依序播放根音、三音、五音，再示範七音目標音。</div>
+    <div class="seq-status" id="seqStatus">按「開始」播放根音，接著加入五音，再示範三音目標音。</div>
   </div>
 
   <div class="card chart-card">
@@ -210,25 +208,24 @@
     <canvas id="chart"></canvas>
     <div class="readout">
       <div class="item"><span id="txtReadoutHz">目前音高</span><b id="curHz">—</b></div>
-      <div class="item"><span id="txtReadoutCents">與七音目標偏差</span><b id="curCents">—</b></div>
+      <div class="item"><span id="txtReadoutCents">與三音目標偏差</span><b id="curCents">—</b></div>
       <div class="item"><span id="txtReadoutJudge">判定</span><b id="curJudge">—</b></div>
       <div class="item" style="opacity:.6;"><span id="txtReadoutDiag">訊號診斷</span><b id="curDiag" style="font-size:12px;font-weight:600;">—</b></div>
     </div>
     <div class="legend">
       <span><i class="swatch" style="background:#EAF2F1;"></i><span id="txtLegendRoot">根音 Root</span></span>
-      <span><i class="swatch" style="background:#8FD9C8;"></i><span id="txtLegendThird">泛音三音 −13.7¢</span></span>
       <span><i class="swatch" style="background:#2FBFAA;"></i><span id="txtLegendFifth">泛音五音 +2¢</span></span>
-      <span><i class="swatch" style="background:#E8A33D;"></i><span id="txtLegendSeventh">泛音七音目標（±6¢ 容忍區）</span></span>
+      <span><i class="swatch" style="background:#E8A33D;"></i><span id="txtLegendThird">泛音三音目標（大三度 −13.7¢／小三度 +15.6¢，±6¢ 容忍區）</span></span>
       <span><i class="swatch" style="background:#33D17A;"></i><span id="txtLegendVoiceOk">你唱的音高（±6¢ 內＝綠色）</span></span>
       <span><i class="swatch" style="background:#E2685A;"></i><span id="txtLegendVoiceBad">你唱的音高（超出 ±6¢＝紅色）</span></span>
     </div>
-    <div class="note" id="txtNote">粗橫線＝播放的和聲音（根音／三音／五音／七音目標）。你目前唱的音高即時軌跡：落在七音目標 ±6 音分容忍帶內顯示<b>綠色</b>，超出容忍帶則顯示<b>紅色</b>，可直接用顏色判斷音準是否落在容忍度內。開始聆聽後伴奏預設會<b>靜音</b>，讓麥克風準確偵測；若你戴耳機（伴奏不會被麥克風收到，不影響偵測），可以自行決定要不要邊聽邊唱：<b>播放和弦</b>＝根音＋三音＋五音＋七音完整七和弦一起響；<b>播放七音</b>＝只聽七音單獨的參考音，兩個開關互相獨立，可以分開用或一起開。所有音都是純正弦波，不含額外泛音。</div>
+    <div class="note" id="txtNote">粗橫線＝播放的和聲音（根音／五音／三音目標）。你目前唱的音高即時軌跡：落在三音目標 ±6 音分容忍帶內顯示<b>綠色</b>，超出容忍帶則顯示<b>紅色</b>，可直接用顏色判斷音準是否落在容忍度內。開始聆聽後伴奏預設會<b>靜音</b>，讓麥克風準確偵測；若你戴耳機（伴奏不會被麥克風收到，不影響偵測），可以自行決定要不要邊聽邊唱：<b>播放三和弦</b>＝根音＋三音＋五音完整三和弦一起響；<b>播放三音</b>＝只聽三音單獨的參考音，兩個開關互相獨立，可以分開用或一起開。所有音都是純正弦波，不含額外泛音。</div>
   </div>
 
   <footer>
     <span id="txtFooter1">此練習需要麥克風權限以偵測音高。若在對話框內的預覽無法要求權限，請下載此 HTML 檔案後直接用瀏覽器開啟。</span><br>
     <span id="txtFooter2">台灣合唱音樂中心製作 · Harmony Ears</span><br>
-    <span style="opacity:.5;"><span id="txtVersionPrefix">App 版本：</span>v1.0</span>
+    <span style="opacity:.5;"><span id="txtVersionPrefix">App 版本：</span>v2.6</span>
   </footer>
 
 </div>
@@ -237,98 +234,94 @@
 /* ---------- i18n ---------- */
 const I18N = {
   zh: {
-    title: '七和弦泛音音準練習｜TCMC',
+    title: '泛音三度音準練習｜TCMC',
     eyebrow: 'TCMC · Harmony Ears',
-    h1: '七和弦泛音音準練習',
-    subMajor7: '大七和弦・純律（Just Intonation）— 依序聽根音、泛音三音（−13.7¢）、泛音五音（+2¢），再聽泛音大七度目標（−11.7¢），接著開口唱七音，看即時音高線能否對齊七音的目標粗線。容忍度 ±6 音分。',
-    subDominant7: '屬七和弦・純律（Just Intonation）— 依序聽根音、泛音三音（−13.7¢）、泛音五音（+2¢），再聽泛音屬七度目標（−31.2¢），接著開口唱七音，看即時音高線能否對齊七音的目標粗線。容忍度 ±6 音分。',
-    chordTypeHeader: '和弦類型',
-    chordMajor7Label: '大七和弦', chordMajor7Small: '純律 15:8 ／ −11.7¢',
-    chordDominant7Label: '屬七和弦', chordDominant7Small: '純律 7:4 ／ −31.2¢',
+    h1: '泛音三度音準練習',
+    subMajor: '大三和弦・純律（Just Intonation）— 先聽根音與泛音五音（+2¢）的兩部和聲，再聽泛音大三度目標（−13.7¢），接著開口唱三音，看即時音高線能否對齊三音的目標粗線。容忍度 ±6 音分。',
+    subMinor: '小三和弦・純律（Just Intonation）— 先聽根音與泛音五音（+2¢）的兩部和聲，再聽泛音小三度目標（+15.6¢），接著開口唱三音，看即時音高線能否對齊三音的目標粗線。容忍度 ±6 音分。',
+    thirdTypeHeader: '三度類型',
+    thirdMajorLabel: '大三度', thirdMajorSmall: '純律 5:4 ／ −13.7¢',
+    thirdMinorLabel: '小三度', thirdMinorSmall: '純律 6:5 ／ +15.6¢',
     voiceHeader: '聲部',
     voiceFemaleLabel: '女聲（原調）', voiceFemaleSmall: '依所選調直接演唱',
     voiceMaleLabel: '男聲（低八度）', voiceMaleSmall: '自動降低一個八度',
     keyHeader: '調性（根音）',
     playbackHeader: '播放控制',
     btnStart: '▶ 開始', btnStop: '■ 停止',
-    chordOff: '播放和弦', chordOn: '停止和弦',
-    seventhOff: '播放七音', seventhOn: '停止七音',
+    chordOff: '播放三和弦', chordOn: '停止三和弦',
+    thirdOff: '播放三音', thirdOn: '停止三音',
     micOff: '開啟麥克風', micOn: '關閉麥克風',
     micNotEnabled: '麥克風未啟用', micListening: '聆聽中',
     micDenied: '無法取得麥克風權限（請於瀏覽器允許，或下載後於本機開啟）',
-    seqDefault: '按「開始」依序播放根音、三音、五音，再示範七音目標音。',
+    seqDefault: '按「開始」播放根音，接著加入五音，再示範三音目標音。',
     seqStep1: '步驟 1／4：播放根音 Root',
-    seqStep2: '步驟 2／4：播放泛音三音（−13.7¢）',
-    seqStep3: '步驟 3／4：播放泛音五音（+2¢）',
-    seqStep4Major7: '步驟 4／4：播放泛音大七度目標（−11.7¢）',
-    seqStep4Dominant7: '步驟 4／4：播放泛音屬七度目標（−31.2¢）',
-    seqStep5: '請開始唱七音，對齊金色目標線（±6¢ 容忍帶）。伴奏已靜音，如需邊聽邊唱（建議戴耳機），可用下方「播放和弦／播放七音」開關。',
-    seqSeventhPlay: (label,hz,cents)=>'播放'+label+'目標：'+hz+' Hz（純律 '+cents+'）',
-    seventhPlayLabelMajor7: '大七度', seventhPlayLabelDominant7: '屬七度',
-    seqSeventhStop: '已停止七音。',
+    seqStep2: '步驟 2／4：加入泛音五音（+2¢）— 兩部和聲',
+    seqStep3Major: '步驟 3／4：播放泛音大三度目標（−13.7¢）',
+    seqStep3Minor: '步驟 3／4：播放泛音小三度目標（+15.6¢）',
+    seqStep4: '步驟 4／4：請開始唱三音，對齊金色目標線（±6¢ 容忍帶）。伴奏已靜音，如需邊聽邊唱（建議戴耳機），可用下方「播放三和弦／播放三音」開關。',
+    seqThirdPlay: (label,hz,cents)=>'播放'+label+'目標：'+hz+' Hz（純律 '+cents+'）',
+    thirdPlayLabelMajor: '大三度', thirdPlayLabelMinor: '小三度',
+    seqThirdStop: '已停止三音。',
     seqStopped: '已停止。按「開始」重新播放。',
     chartHeader: '音高圖',
-    readoutHz: '目前音高', readoutCents: '與七音目標偏差', readoutJudge: '判定', readoutDiag: '訊號診斷',
+    readoutHz: '目前音高', readoutCents: '與三音目標偏差', readoutJudge: '判定', readoutDiag: '訊號診斷',
     diagText: (rms,clarity)=>'RMS '+rms+' / 清晰度 '+clarity,
     judgeSilent: '靜音', judgeOk: '✓ 準確', judgeHigh: '偏高', judgeLow: '偏低',
-    legendRoot: '根音 Root', legendThird: '泛音三音 −13.7¢', legendFifth: '泛音五音 +2¢',
-    legendSeventhMajor7: '泛音大七度目標 −11.7¢（±6¢ 容忍區）',
-    legendSeventhDominant7: '泛音屬七度目標 −31.2¢（±6¢ 容忍區）',
+    legendRoot: '根音 Root', legendFifth: '泛音五音 +2¢',
+    legendThird: '泛音三音目標（大三度 −13.7¢／小三度 +15.6¢，±6¢ 容忍區）',
     legendVoiceOk: '你唱的音高（±6¢ 內＝綠色）', legendVoiceBad: '你唱的音高（超出 ±6¢＝紅色）',
-    noteText: '粗橫線＝播放的和聲音（根音／三音／五音／七音目標）。你目前唱的音高即時軌跡：落在七音目標 ±6 音分容忍帶內顯示<b>綠色</b>，超出容忍帶則顯示<b>紅色</b>，可直接用顏色判斷音準是否落在容忍度內。開始聆聽後伴奏預設會<b>靜音</b>，讓麥克風準確偵測；若你戴耳機（伴奏不會被麥克風收到，不影響偵測），可以自行決定要不要邊聽邊唱：<b>播放和弦</b>＝根音＋三音＋五音＋七音完整七和弦一起響；<b>播放七音</b>＝只聽七音單獨的參考音，兩個開關互相獨立，可以分開用或一起開。所有音都是純正弦波，不含額外泛音。',
+    noteText: '粗橫線＝播放的和聲音（根音／五音／三音目標）。你目前唱的音高即時軌跡：落在三音目標 ±6 音分容忍帶內顯示<b>綠色</b>，超出容忍帶則顯示<b>紅色</b>，可直接用顏色判斷音準是否落在容忍度內。開始聆聽後伴奏預設會<b>靜音</b>，讓麥克風準確偵測；若你戴耳機（伴奏不會被麥克風收到，不影響偵測），可以自行決定要不要邊聽邊唱：<b>播放三和弦</b>＝根音＋三音＋五音完整三和弦一起響；<b>播放三音</b>＝只聽三音單獨的參考音，兩個開關互相獨立，可以分開用或一起開。所有音都是純正弦波，不含額外泛音。',
     footerLine1: '此練習需要麥克風權限以偵測音高。若在對話框內的預覽無法要求權限，請下載此 HTML 檔案後直接用瀏覽器開啟。',
     footerLine2: '台灣合唱音樂中心製作 · Harmony Ears',
     versionPrefix: 'App 版本：',
     langBtn: 'EN',
-    chartRootLabel: '根音 Root', chartThirdLabel: '三音 −13.7¢', chartFifthLabel: '五音 +2¢',
-    chartSeventhMajor7: '大七度目標 −11.7¢', chartSeventhDominant7: '屬七度目標 −31.2¢',
+    chartRootLabel: '根音 Root', chartFifthLabel: '五音 +2¢',
+    chartThirdMajor: '大三度目標 −13.7¢', chartThirdMinor: '小三度目標 +15.6¢',
   },
   en: {
-    title: 'Harmonic Seventh Pitch Trainer｜TCMC',
+    title: 'Harmonic Third Pitch Trainer｜TCMC',
     eyebrow: 'TCMC · Harmony Ears',
-    h1: 'Harmonic Seventh Pitch Trainer',
-    subMajor7: 'Major 7th chord · Just Intonation — Listen to the root, then the third (−13.7¢), then the fifth (+2¢) in sequence, then the major-seventh target (−11.7¢). Sing the seventh and watch whether your live pitch line lines up with the gold target line. Tolerance ±6 cents.',
-    subDominant7: 'Dominant 7th chord · Just Intonation — Listen to the root, then the third (−13.7¢), then the fifth (+2¢) in sequence, then the dominant/harmonic-seventh target (−31.2¢). Sing the seventh and watch whether your live pitch line lines up with the gold target line. Tolerance ±6 cents.',
-    chordTypeHeader: 'Chord Type',
-    chordMajor7Label: 'Major 7th', chordMajor7Small: 'JI 15:8 ／ −11.7¢',
-    chordDominant7Label: 'Dominant 7th', chordDominant7Small: 'JI 7:4 ／ −31.2¢',
+    h1: 'Harmonic Third Pitch Trainer',
+    subMajor: 'Major triad · Just Intonation — Listen to the root, then the fifth (+2¢) joining in two-part harmony, then the major-third target (−13.7¢). Sing the third and watch whether your live pitch line lines up with the gold target line. Tolerance ±6 cents.',
+    subMinor: 'Minor triad · Just Intonation — Listen to the root, then the fifth (+2¢) joining in two-part harmony, then the minor-third target (+15.6¢). Sing the third and watch whether your live pitch line lines up with the gold target line. Tolerance ±6 cents.',
+    thirdTypeHeader: 'Third Type',
+    thirdMajorLabel: 'Major 3rd', thirdMajorSmall: 'JI 5:4 ／ −13.7¢',
+    thirdMinorLabel: 'Minor 3rd', thirdMinorSmall: 'JI 6:5 ／ +15.6¢',
     voiceHeader: 'Voice Part',
     voiceFemaleLabel: 'Treble (as written)', voiceFemaleSmall: 'Sing in the selected key',
     voiceMaleLabel: 'Bass (down an octave)', voiceMaleSmall: 'Auto-shifted down one octave',
     keyHeader: 'Key (Root Note)',
     playbackHeader: 'Playback',
     btnStart: '▶ Start', btnStop: '■ Stop',
-    chordOff: 'Play Chord', chordOn: 'Stop Chord',
-    seventhOff: 'Play Seventh', seventhOn: 'Stop Seventh',
+    chordOff: 'Play Triad', chordOn: 'Stop Triad',
+    thirdOff: 'Play Third', thirdOn: 'Stop Third',
     micOff: 'Enable Mic', micOn: 'Disable Mic',
     micNotEnabled: 'Mic not enabled', micListening: 'Listening',
     micDenied: 'Mic permission denied (allow it in your browser, or download this file and open it locally)',
-    seqDefault: 'Press "Start" to play the root, third, and fifth in sequence, then a demo of the seventh target.',
+    seqDefault: 'Press "Start" to play the root, then the fifth, then a demo of the third target.',
     seqStep1: 'Step 1/4: playing the root',
-    seqStep2: 'Step 2/4: playing the third (−13.7¢)',
-    seqStep3: 'Step 3/4: playing the fifth (+2¢)',
-    seqStep4Major7: 'Step 4/4: playing the major-seventh target (−11.7¢)',
-    seqStep4Dominant7: 'Step 4/4: playing the dominant/harmonic-seventh target (−31.2¢)',
-    seqStep5: 'Start singing the seventh and align with the gold target line (±6¢ tolerance). Accompaniment is muted — use "Play Chord" / "Play Seventh" below if you want to sing along (headphones recommended).',
-    seqSeventhPlay: (label,hz,cents)=>'Playing '+label+' target: '+hz+' Hz (JI '+cents+')',
-    seventhPlayLabelMajor7: 'major 7th', seventhPlayLabelDominant7: 'dominant 7th',
-    seqSeventhStop: 'Seventh stopped.',
+    seqStep2: 'Step 2/4: adding the fifth (+2¢) — two-part harmony',
+    seqStep3Major: 'Step 3/4: playing the major-third target (−13.7¢)',
+    seqStep3Minor: 'Step 3/4: playing the minor-third target (+15.6¢)',
+    seqStep4: 'Step 4/4: start singing the third and align with the gold target line (±6¢ tolerance). Accompaniment is muted — use "Play Triad" / "Play Third" below if you want to sing along (headphones recommended).',
+    seqThirdPlay: (label,hz,cents)=>'Playing '+label+' target: '+hz+' Hz (JI '+cents+')',
+    thirdPlayLabelMajor: 'major 3rd', thirdPlayLabelMinor: 'minor 3rd',
+    seqThirdStop: 'Third stopped.',
     seqStopped: 'Stopped. Press "Start" to play again.',
     chartHeader: 'Pitch Chart',
     readoutHz: 'Current Pitch', readoutCents: 'Offset from Target', readoutJudge: 'Judgement', readoutDiag: 'Signal Diagnostics',
     diagText: (rms,clarity)=>'RMS '+rms+' / Clarity '+clarity,
     judgeSilent: 'Silent', judgeOk: '✓ In tune', judgeHigh: 'Sharp', judgeLow: 'Flat',
-    legendRoot: 'Root', legendThird: 'Third −13.7¢', legendFifth: 'Fifth +2¢',
-    legendSeventhMajor7: 'Major 7th target −11.7¢ (±6¢ tolerance)',
-    legendSeventhDominant7: 'Dominant 7th target −31.2¢ (±6¢ tolerance)',
+    legendRoot: 'Root', legendFifth: 'Fifth +2¢',
+    legendThird: 'Third target (major −13.7¢ / minor +15.6¢, ±6¢ tolerance)',
     legendVoiceOk: 'Your pitch (within ±6¢ = green)', legendVoiceBad: 'Your pitch (outside ±6¢ = red)',
-    noteText: 'Thick lines = the reference tones (root / third / fifth / seventh target). Your live pitch trace shows <b>green</b> when within ±6 cents of the seventh target, <b>red</b> when outside it, so you can judge intonation by color alone. Once listening starts, the accompaniment is muted by default so the mic can detect clearly; if you wear headphones (so the mic won\'t pick up the accompaniment), you can choose to sing along: <b>Play Chord</b> sounds the full root+third+fifth+seventh chord; <b>Play Seventh</b> plays only the seventh as a reference tone — the two switches are independent, use either or both. All tones are pure sine waves with no added harmonics.',
+    noteText: 'Thick lines = the reference tones (root / fifth / third target). Your live pitch trace shows <b>green</b> when within ±6 cents of the third target, <b>red</b> when outside it, so you can judge intonation by color alone. Once listening starts, the accompaniment is muted by default so the mic can detect clearly; if you wear headphones (so the mic won\'t pick up the accompaniment), you can choose to sing along: <b>Play Triad</b> sounds the full root+third+fifth chord; <b>Play Third</b> plays only the third as a reference tone — the two switches are independent, use either or both. All tones are pure sine waves with no added harmonics.',
     footerLine1: 'This exercise needs microphone access to detect pitch. If the in-chat preview can\'t request permission, download this HTML file and open it directly in a browser.',
     footerLine2: 'Produced by Taiwan Choral Music Center · Harmony Ears',
     versionPrefix: 'App Version: ',
     langBtn: '中文',
-    chartRootLabel: 'Root', chartThirdLabel: 'Third −13.7¢', chartFifthLabel: 'Fifth +2¢',
-    chartSeventhMajor7: 'Major 7th target −11.7¢', chartSeventhDominant7: 'Dominant 7th target −31.2¢',
+    chartRootLabel: 'Root', chartFifthLabel: 'Fifth +2¢',
+    chartThirdMajor: 'Major 3rd target −13.7¢', chartThirdMinor: 'Minor 3rd target +15.6¢',
   }
 };
 function t(key){ return I18N[state.lang][key]; }
@@ -342,31 +335,23 @@ const KEYS = [
 ];
 function midiToFreq(m){ return 440*Math.pow(2,(m-69)/12); }
 
-// Third (5/4) and fifth (3/2) are the SAME just-intonation ratios for both chord
-// types — a major 7th chord and a dominant 7th chord are both built on a plain
-// major triad; they differ only in the seventh on top.
-const THIRD_RATIO = 5/4;
-const FIFTH_RATIO = 3/2;
-const SEVENTH_RATIO = { major7: 15/8, dominant7: 7/4 };
-function seventhChartLabel(){ return state.chordType==='major7' ? t('chartSeventhMajor7') : t('chartSeventhDominant7'); }
-function seventhCents(){ return 1200*Math.log2(SEVENTH_RATIO[state.chordType]); }
-const CENTS = {
-  root:0,
-  third:1200*Math.log2(THIRD_RATIO),
-  fifth:1200*Math.log2(FIFTH_RATIO),
-  get seventh(){ return seventhCents(); }
-};
-const TOLERANCE = 6; // cents
-const TRACE_MAX = 260;
+const THIRD_RATIO = { major: 5/4, minor: 6/5 };
+function thirdChartLabel(){ return state.thirdType==='major' ? t('chartThirdMajor') : t('chartThirdMinor'); }
+function thirdCents(){ return 1200*Math.log2(THIRD_RATIO[state.thirdType]); }
+const CENTS = { root:0, fifth:1200*Math.log2(1.5), get third(){ return thirdCents(); } };
+const TOLERANCE = 6;
+const TRACE_MAX = 420;
 
+/* ---------- State ---------- */
 let state = {
-  keyIndex:0, voice:'female', chordType:'major7', lang:'zh',
-  running:false, audioCtx:null, nodes:{}, freqs:null,
-  chordAudible:false, seventhAudible:false, replayTone:null, chordExtraTones:null,
-  reveal:{root:false,third:false,fifth:false,seventh:false},
-  trace:[], inTuneStreak:0,
-  listening:false, analyser:null, micStream:null, micSource:null,
+  keyIndex:0, voice:'female', thirdType:'major', lang:'zh',
+  audioCtx:null, nodes:{}, freqs:null,
+  running:false, listening:false,
+  micStream:null, analyser:null, micSource:null,
   rafId:null, lastProcess:0, missCount:0, lastGoodPoint:null, centsHistory:[], jumpCandidate:null,
+  trace:[], reveal:{root:false,fifth:false,third:false},
+  inTuneStreak:0,
+  chordAudible:false, thirdAudible:false, replayTone:null, chordThirdTone:null,
 };
 
 /* ---------- UI build ---------- */
@@ -375,12 +360,12 @@ function applyLang(){
   document.documentElement.lang = state.lang==='zh' ? 'zh-Hant' : 'en';
   document.getElementById('txtEyebrow').textContent = t('eyebrow');
   document.getElementById('txtH1').textContent = t('h1');
-  document.getElementById('subHeader').textContent = state.chordType==='major7' ? t('subMajor7') : t('subDominant7');
-  document.getElementById('txtChordTypeHeader').textContent = t('chordTypeHeader');
-  document.getElementById('txtChordMajor7Label').textContent = t('chordMajor7Label');
-  document.getElementById('txtChordMajor7Small').textContent = t('chordMajor7Small');
-  document.getElementById('txtChordDominant7Label').textContent = t('chordDominant7Label');
-  document.getElementById('txtChordDominant7Small').textContent = t('chordDominant7Small');
+  document.getElementById('subHeader').textContent = state.thirdType==='major' ? t('subMajor') : t('subMinor');
+  document.getElementById('txtThirdTypeHeader').textContent = t('thirdTypeHeader');
+  document.getElementById('txtThirdMajorLabel').textContent = t('thirdMajorLabel');
+  document.getElementById('txtThirdMajorSmall').textContent = t('thirdMajorSmall');
+  document.getElementById('txtThirdMinorLabel').textContent = t('thirdMinorLabel');
+  document.getElementById('txtThirdMinorSmall').textContent = t('thirdMinorSmall');
   document.getElementById('txtVoiceHeader').textContent = t('voiceHeader');
   document.getElementById('txtVoiceFemaleLabel').textContent = t('voiceFemaleLabel');
   document.getElementById('txtVoiceFemaleSmall').textContent = t('voiceFemaleSmall');
@@ -391,7 +376,7 @@ function applyLang(){
   document.getElementById('btnStart').textContent = t('btnStart');
   document.getElementById('btnStop').textContent = t('btnStop');
   setToggleLabel('btnChordToggle', state.chordAudible, t('chordOff'), t('chordOn'));
-  setToggleLabel('btnSeventhToggle', state.seventhAudible, t('seventhOff'), t('seventhOn'));
+  setToggleLabel('btnThirdToggle', state.thirdAudible, t('thirdOff'), t('thirdOn'));
   setToggleLabel('btnMicToggle', state.listening, t('micOff'), t('micOn'));
   setMicStatus(state.listening ? t('micListening') : t('micNotEnabled'), state.listening ? 'ok' : undefined);
   document.getElementById('seqStatus').textContent = state.running ? document.getElementById('seqStatus').textContent : t('seqDefault');
@@ -401,9 +386,8 @@ function applyLang(){
   document.getElementById('txtReadoutJudge').textContent = t('readoutJudge');
   document.getElementById('txtReadoutDiag').textContent = t('readoutDiag');
   document.getElementById('txtLegendRoot').textContent = t('legendRoot');
-  document.getElementById('txtLegendThird').textContent = t('legendThird');
   document.getElementById('txtLegendFifth').textContent = t('legendFifth');
-  document.getElementById('txtLegendSeventh').textContent = state.chordType==='major7' ? t('legendSeventhMajor7') : t('legendSeventhDominant7');
+  document.getElementById('txtLegendThird').textContent = t('legendThird');
   document.getElementById('txtLegendVoiceOk').textContent = t('legendVoiceOk');
   document.getElementById('txtLegendVoiceBad').textContent = t('legendVoiceBad');
   document.getElementById('txtNote').innerHTML = t('noteText');
@@ -439,33 +423,32 @@ function setVoice(v){
   document.getElementById('voiceFemale').classList.toggle('active', v==='female');
   document.getElementById('voiceMale').classList.toggle('active', v==='male');
 }
-function setChordType(ct){
+function setThirdType(t_){
   if(state.running) stopAll();
-  state.chordType = ct;
-  document.getElementById('chordMajor7').classList.toggle('active', ct==='major7');
-  document.getElementById('chordDominant7').classList.toggle('active', ct==='dominant7');
-  document.getElementById('subHeader').textContent = ct==='major7' ? t('subMajor7') : t('subDominant7');
-  document.getElementById('txtLegendSeventh').textContent = ct==='major7' ? t('legendSeventhMajor7') : t('legendSeventhDominant7');
+  state.thirdType = t_;
+  document.getElementById('thirdMajor').classList.toggle('active', t_==='major');
+  document.getElementById('thirdMinor').classList.toggle('active', t_==='minor');
+  document.getElementById('subHeader').textContent = t_==='major' ? t('subMajor') : t('subMinor');
 }
 
 function setButtonsRunning(running){
   document.getElementById('btnStart').disabled = running;
   document.getElementById('btnStop').disabled = !running;
   document.getElementById('btnChordToggle').disabled = true; // enabled once demo sequence finishes
-  document.getElementById('btnSeventhToggle').disabled = true;
+  document.getElementById('btnThirdToggle').disabled = true;
   document.getElementById('btnMicToggle').disabled = true;
   if(!running){
     state.chordAudible = false;
-    state.seventhAudible = false;
+    state.thirdAudible = false;
     setToggleLabel('btnChordToggle', false, t('chordOff'), t('chordOn'));
-    setToggleLabel('btnSeventhToggle', false, t('seventhOff'), t('seventhOn'));
+    setToggleLabel('btnThirdToggle', false, t('thirdOff'), t('thirdOn'));
     setToggleLabel('btnMicToggle', false, t('micOff'), t('micOn'));
   }
   document.querySelectorAll('.key-btn').forEach(el=>el.disabled=running);
   document.getElementById('voiceFemale').disabled = running;
   document.getElementById('voiceMale').disabled = running;
-  document.getElementById('chordMajor7').disabled = running;
-  document.getElementById('chordDominant7').disabled = running;
+  document.getElementById('thirdMajor').disabled = running;
+  document.getElementById('thirdMinor').disabled = running;
 }
 function updateStatus(text){ document.getElementById('seqStatus').textContent = text; }
 function setMicStatus(text, kind){
@@ -481,13 +464,15 @@ async function ensureAudioCtx(){
   // anywhere from a few ms to a few hundred ms — if the caller schedules playback against
   // ctx.currentTime right after firing resume() without waiting, the scheduled start times can
   // land in the past by the time the context is truly running, and that audio silently never
-  // plays.
+  // plays. This was the cause of "first playback after opening the app has no sound."
   if(state.audioCtx.state==='suspended'){
     try{ await state.audioCtx.resume(); }catch(e){ /* ignore — we still try to play below */ }
   }
-  // Mobile browsers (iOS Safari, some Android WebViews) sometimes leave audio output
-  // silent even after resume() reports "running". Playing a real, immediately-started
-  // silent buffer inside the same user-gesture call stack forces a full unlock.
+  // Mobile browsers (iOS Safari, some Android WebViews) sometimes leave audio
+  // output silent even after resume() reports "running" — resume() alone can
+  // resolve without truly unlocking the speaker. Playing a real, immediately-
+  // started silent buffer inside the same user-gesture call stack is the
+  // standard trick to force a full unlock every time this is called.
   try{
     const buf = state.audioCtx.createBuffer(1, 1, state.audioCtx.sampleRate);
     const src = state.audioCtx.createBufferSource();
@@ -497,8 +482,12 @@ async function ensureAudioCtx(){
   }catch(e){ /* non-fatal */ }
   return state.audioCtx;
 }
-/* Pure sine tones throughout — no added harmonics, for the cleanest possible
-   demonstration of just-intonation vs. equal-temperament tuning. */
+/* Pure sine tones throughout — no added harmonics.
+   (Previously added a touch of 2nd/3rd harmonic to help low-pitch perception,
+   but this created audible beating once chord + third could sound together via
+   the toggle controls, and isn't needed now that the pitch detector's search
+   range is context-constrained. Kept as a pure-tone generator to match the
+   established pure-sine ear-training approach.) */
 function makeTone(ctx, freq){
   const gain = ctx.createGain(); gain.gain.value=0;
   gain.connect(ctx.destination);
@@ -540,100 +529,75 @@ async function startSequence(){
   // Request the microphone as early as possible — right when "Start" is pressed —
   // rather than waiting until the demo finishes. On mobile browsers (notably iOS
   // Safari), the audio *output* session often stays in a restricted/quiet mode
-  // until the page has requested microphone input at least once. We don't start
-  // pitch detection yet (that still waits until after the demo) — we just acquire
-  // and hold the stream so the system's audio session is fully "awake" first.
+  // until the page has requested microphone input at least once; only after that
+  // does playback reliably come through the speaker at full volume. We don't
+  // start pitch detection yet (that still waits until after the demo, so it
+  // doesn't pick up the demo tones) — we just acquire and hold the stream so the
+  // system's audio session is fully "awake" before we schedule any playback.
   await ensureMicStream();
   state.trace=[];
-  state.reveal={root:false,third:false,fifth:false,seventh:false};
+  state.reveal={root:false,fifth:false,third:false};
   state.inTuneStreak=0;
 
   const root = currentRootFreq();
-  const third = root*THIRD_RATIO;
-  const fifth = root*FIFTH_RATIO;
-  const seventh = root*SEVENTH_RATIO[state.chordType];
-  state.freqs = {root, third, fifth, seventh};
+  const fifth = root*1.5;
+  const third = root*THIRD_RATIO[state.thirdType];
+  state.freqs = {root, fifth, third};
 
-  // Cumulative harmony — root plays and holds, the third joins in on top (root keeps
-  // sustaining), then the fifth joins in on top of both (root+third keep sustaining).
-  // Each already-sounding note ducks down slightly as a new one joins, to keep the
-  // overall mix balanced, but nothing cuts off — same approach as the third-practice app.
-  // The seventh then joins as the held target, sounding together with the full triad for
-  // a moment before everything fades to silence and the mic takes over.
   const t0 = ctx.currentTime + 0.08;
-  const tThird = t0 + 1.0;
-  const tFifth = tThird + 1.0;
-  const tSeventh = tFifth + 1.0;
-  const tSeventhOff = tSeventh + 1.2;
+  const tFifth = t0 + 1.3;
+  const tThird = tFifth + 1.5;
+  const tThirdOff = tThird + 1.2;
 
   const rootTone = makeTone(ctx, root);
   rootTone.gain.gain.setValueAtTime(0, t0);
-  rootTone.gain.gain.linearRampToValueAtTime(0.30, t0+0.06);      // root alone
-  rootTone.gain.gain.setValueAtTime(0.30, tThird);
-  rootTone.gain.gain.linearRampToValueAtTime(0.22, tThird+0.3);   // duck a touch as third joins
-  rootTone.gain.gain.setValueAtTime(0.22, tFifth);
-  rootTone.gain.gain.linearRampToValueAtTime(0.16, tFifth+0.3);   // duck a touch more as fifth joins
-  rootTone.gain.gain.setValueAtTime(0.16, tSeventh);
-  rootTone.gain.gain.linearRampToValueAtTime(0.12, tSeventh+0.3); // settle to a quiet drone under the target
-
-  const thirdTone = makeTone(ctx, third);
-  thirdTone.gain.gain.setValueAtTime(0, tThird);
-  thirdTone.gain.gain.linearRampToValueAtTime(0.26, tThird+0.08); // third joins, root still sounding
-  thirdTone.gain.gain.setValueAtTime(0.26, tFifth);
-  thirdTone.gain.gain.linearRampToValueAtTime(0.18, tFifth+0.3);  // duck as fifth joins
-  thirdTone.gain.gain.setValueAtTime(0.18, tSeventh);
-  thirdTone.gain.gain.linearRampToValueAtTime(0.13, tSeventh+0.3);
+  rootTone.gain.gain.linearRampToValueAtTime(0.28, t0+0.18);
+  rootTone.gain.gain.setValueAtTime(0.28, tFifth);
+  rootTone.gain.gain.linearRampToValueAtTime(0.20, tFifth+0.25);
 
   const fifthTone = makeTone(ctx, fifth);
   fifthTone.gain.gain.setValueAtTime(0, tFifth);
-  fifthTone.gain.gain.linearRampToValueAtTime(0.22, tFifth+0.08); // fifth joins, root+third still sounding
-  fifthTone.gain.gain.setValueAtTime(0.22, tSeventh);
-  fifthTone.gain.gain.linearRampToValueAtTime(0.15, tSeventh+0.3);
+  fifthTone.gain.gain.linearRampToValueAtTime(0.20, tFifth+0.3);
 
-  const seventhTone = makeTone(ctx, seventh);
-  seventhTone.gain.gain.setValueAtTime(0, tSeventh);
-  seventhTone.gain.gain.linearRampToValueAtTime(0.32, tSeventh+0.08); // target enters, prominent
-  seventhTone.gain.gain.setValueAtTime(0.32, tSeventhOff);
-  seventhTone.gain.gain.linearRampToValueAtTime(0, tSeventhOff+0.3);  // target demo ends, fades out
-  setTimeout(()=>{ stopTone(seventhTone, ctx.currentTime); }, (tSeventhOff+0.35-ctx.currentTime)*1000);
+  const thirdTone = makeTone(ctx, third);
+  thirdTone.gain.gain.setValueAtTime(0, tThird);
+  thirdTone.gain.gain.linearRampToValueAtTime(0.24, tThird+0.15);
+  thirdTone.gain.gain.setValueAtTime(0.24, tThirdOff);
+  thirdTone.gain.gain.linearRampToValueAtTime(0, tThirdOff+0.3);
+  setTimeout(()=>{ stopTone(thirdTone, ctx.currentTime); }, (tThirdOff+0.35-ctx.currentTime)*1000);
 
-  state.nodes = {rootTone, thirdTone, fifthTone, seventhTone};
+  state.nodes = {rootTone, fifthTone, thirdTone};
   state.running = true;
   setButtonsRunning(true);
 
   const ctxNow = ctx.currentTime;
-  const msUntil = (tAudio)=> Math.max(0,(tAudio-ctxNow)*1000);
+  const msUntil = (t)=> Math.max(0,(t-ctxNow)*1000);
 
   pendingTimers.push(setTimeout(()=>{ state.reveal.root=true; updateStatus(t('seqStep1')); drawChart(); }, msUntil(t0)));
-  pendingTimers.push(setTimeout(()=>{ state.reveal.third=true; updateStatus(t('seqStep2')); drawChart(); }, msUntil(tThird)));
-  pendingTimers.push(setTimeout(()=>{ state.reveal.fifth=true; updateStatus(t('seqStep3')); drawChart(); }, msUntil(tFifth)));
+  pendingTimers.push(setTimeout(()=>{ state.reveal.fifth=true; updateStatus(t('seqStep2')); drawChart(); }, msUntil(tFifth)));
+  pendingTimers.push(setTimeout(()=>{ state.reveal.third=true; updateStatus(state.thirdType==='major'?t('seqStep3Major'):t('seqStep3Minor')); drawChart(); }, msUntil(tThird)));
   pendingTimers.push(setTimeout(()=>{
-    state.reveal.seventh=true;
-    updateStatus(state.chordType==='major7'?t('seqStep4Major7'):t('seqStep4Dominant7'));
-    drawChart();
-  }, msUntil(tSeventh)));
-  pendingTimers.push(setTimeout(()=>{
-    updateStatus(t('seqStep5'));
+    updateStatus(t('seqStep4'));
     duckDrone();
     startListening();
     document.getElementById('btnChordToggle').disabled = false;
-    document.getElementById('btnSeventhToggle').disabled = false;
+    document.getElementById('btnThirdToggle').disabled = false;
     document.getElementById('btnMicToggle').disabled = false;
-  }, msUntil(tSeventhOff+0.4)));
+  }, msUntil(tThirdOff+0.4)));
 }
 
 function duckDrone(){
   const ctx = state.audioCtx;
   if(!ctx || !state.nodes) return;
   const tAudio = ctx.currentTime + 0.05;
-  ['rootTone','thirdTone','fifthTone'].forEach(k=>{
+  ['rootTone','fifthTone'].forEach(k=>{
     const tone = state.nodes[k];
     if(!tone) return;
     tone.gain.gain.cancelScheduledValues(tAudio);
     tone.gain.gain.setValueAtTime(tone.gain.gain.value, tAudio);
     // Fully mute rather than just quiet down: the pitch detector judges periodicity
     // cleanliness, not loudness, so even a quiet-but-pure drone tone can still out-compete
-    // the target/voice pitch and cause flip-flopping between reference notes.
+    // the target/voice pitch and cause flip-flopping between root/third/fifth.
     tone.gain.gain.linearRampToValueAtTime(0.0001, tAudio+0.35);
   });
 }
@@ -645,53 +609,53 @@ function setToggleLabel(id, on, offText, onText){
 }
 
 async function toggleChord(){
-  if(!state.running || !state.freqs) return;
+  if(!state.running || !state.nodes || !state.freqs) return;
   const ctx = await ensureAudioCtx();
   const tAudio = ctx.currentTime+0.03;
   state.chordAudible = !state.chordAudible;
-  const targetRootLevel = state.chordAudible ? 0.15 : 0.0001;
-  ['rootTone','thirdTone','fifthTone'].forEach(k=>{
+  const targetRootFifth = state.chordAudible ? 0.15 : 0.0001;
+  ['rootTone','fifthTone'].forEach(k=>{
     const tone = state.nodes[k];
     if(!tone) return;
     tone.gain.gain.cancelScheduledValues(tAudio);
     tone.gain.gain.setValueAtTime(tone.gain.gain.value, tAudio);
-    tone.gain.gain.linearRampToValueAtTime(targetRootLevel, tAudio+0.3);
+    tone.gain.gain.linearRampToValueAtTime(targetRootFifth, tAudio+0.3);
   });
-  // "和弦" = the full seventh chord, so also (re)play the seventh here (a separate
-  // oscillator from the standalone "播放七音" toggle, which stays independently controlled).
+  // "和弦" = the full triad, so include the third note too (a separate oscillator
+  // from the standalone "播放三音" toggle, since that one's independently controlled).
   if(state.chordAudible){
-    const tone = makeTone(ctx, state.freqs.seventh);
+    const tone = makeTone(ctx, state.freqs.third);
     tone.gain.gain.setValueAtTime(0, tAudio);
     tone.gain.gain.linearRampToValueAtTime(0.20, tAudio+0.3);
-    state.chordExtraTones = [tone];
-  } else if(state.chordExtraTones){
-    state.chordExtraTones.forEach(tone=>fadeStop(tone, ctx, tAudio));
-    state.chordExtraTones = null;
+    state.chordThirdTone = tone;
+  } else if(state.chordThirdTone){
+    fadeStop(state.chordThirdTone, ctx, tAudio);
+    state.chordThirdTone = null;
   }
   setToggleLabel('btnChordToggle', state.chordAudible, t('chordOff'), t('chordOn'));
 }
 
-async function toggleSeventh(){
+async function toggleThird(){
   if(!state.running || !state.freqs) return;
   const ctx = await ensureAudioCtx();
-  state.seventhAudible = !state.seventhAudible;
-  if(state.seventhAudible){
+  state.thirdAudible = !state.thirdAudible;
+  if(state.thirdAudible){
     const t0 = ctx.currentTime+0.03;
-    const tone = makeTone(ctx, state.freqs.seventh);
+    const tone = makeTone(ctx, state.freqs.third);
     tone.gain.gain.setValueAtTime(0,t0);
     tone.gain.gain.linearRampToValueAtTime(0.32, t0+0.12);
     state.replayTone = tone;
-    const label = state.chordType==='major7' ? t('seventhPlayLabelMajor7') : t('seventhPlayLabelDominant7');
-    const centsTxt = state.chordType==='major7' ? '−11.7¢' : '−31.2¢';
-    updateStatus(t('seqSeventhPlay')(label, state.freqs.seventh.toFixed(2), centsTxt));
+    const label = state.thirdType==='major' ? t('thirdPlayLabelMajor') : t('thirdPlayLabelMinor');
+    const centsTxt = state.thirdType==='major' ? '−13.7¢' : '+15.6¢';
+    updateStatus(t('seqThirdPlay')(label, state.freqs.third.toFixed(2), centsTxt));
   } else {
     if(state.replayTone){
       fadeStop(state.replayTone, ctx, ctx.currentTime+0.02);
       state.replayTone = null;
     }
-    updateStatus(t('seqSeventhStop'));
+    updateStatus(t('seqThirdStop'));
   }
-  setToggleLabel('btnSeventhToggle', state.seventhAudible, t('seventhOff'), t('seventhOn'));
+  setToggleLabel('btnThirdToggle', state.thirdAudible, t('thirdOff'), t('thirdOn'));
 }
 
 function stopAll(){
@@ -699,15 +663,15 @@ function stopAll(){
   const ctx = state.audioCtx;
   if(ctx && state.nodes){
     const tAudio = ctx.currentTime;
-    ['rootTone','thirdTone','fifthTone','seventhTone'].forEach(k=>{ if(state.nodes[k]) fadeStop(state.nodes[k], ctx, tAudio); });
+    ['rootTone','fifthTone','thirdTone'].forEach(k=>{ if(state.nodes[k]) fadeStop(state.nodes[k], ctx, tAudio); });
   }
   if(ctx && state.replayTone){
     fadeStop(state.replayTone, ctx, ctx.currentTime);
     state.replayTone = null;
   }
-  if(ctx && state.chordExtraTones){
-    state.chordExtraTones.forEach(tone=>fadeStop(tone, ctx, ctx.currentTime));
-    state.chordExtraTones = null;
+  if(ctx && state.chordThirdTone){
+    fadeStop(state.chordThirdTone, ctx, ctx.currentTime);
+    state.chordThirdTone = null;
   }
   state.nodes={};
   state.running=false;
@@ -807,6 +771,7 @@ function detectPitch(buf, sampleRate, minFreq, maxFreq){
 
   // Normalized Square Difference Function (McLeod Pitch Method style):
   // nsdf(lag) = 2*ACF(lag) / (energy of both overlapping windows)
+  // Stays in roughly [-1,1]; a clean periodic tone gives sharp peaks near 1.
   const nsdf = new Float32Array(maxLag+2);
   for(let lag=minLag; lag<=maxLag; lag++){
     let acf=0, m=0;
@@ -869,16 +834,14 @@ function loopPitch(ts){
   let searchMin=55, searchMax=1100;
   if(state.freqs){
     searchMin = state.freqs.root*0.80;
-    // Upper bound must comfortably cover the seventh (up to 1.875x root for major 7th)
-    // while staying safely below the octave (2x root) to avoid octave-doubling confusion.
-    searchMax = state.freqs.root*1.97;
+    searchMax = state.freqs.fifth*1.30;
   }
   const {freq, rms, clarity} = detectPitch(buf, sampleRate, searchMin, searchMax);
 
   let point = {cents:null, voiced:false};
   if(freq>0 && state.freqs){
     const cents = centsFromRoot(freq, state.freqs.root);
-    if(cents > -150 && cents < 1300){ point = {cents, voiced:true, freq}; }
+    if(cents > -150 && cents < 900){ point = {cents, voiced:true, freq}; }
   }
 
   const GRACE = 12; // allow up to ~480ms of dropped frames before treating as a real gap
@@ -889,11 +852,12 @@ function loopPitch(ts){
   if(point.voiced){
     const isBigJump = state.lastGoodPoint && Math.abs(point.cents - state.lastGoodPoint.cents) > JUMP_THRESHOLD;
     if(isBigJump){
-      // Real voices on noisier/farther mics occasionally produce a brief, noise-driven
-      // octave/rumble misread between syllables or on a breath. A single stray frame
-      // shouldn't be allowed to yank the reading around, so a big jump has to (a) show
-      // unusually clean periodicity and (b) repeat for a few consecutive frames before
-      // we treat it as a real pitch change rather than noise.
+      // Real voices on noisier/farther mics (e.g. an iMac's built-in mic vs. a phone held close)
+      // occasionally produce a brief, noise-driven octave/rumble misread between syllables or on a
+      // breath. A single stray frame shouldn't be allowed to yank the reading around, so a big jump
+      // has to (a) show unusually clean periodicity and (b) repeat for a few consecutive frames
+      // before we treat it as a real pitch change rather than noise. Until confirmed, we just hold
+      // the last trusted pitch — same as bridging a dropout.
       const candidate = state.jumpCandidate;
       const matchesCandidate = candidate && Math.abs(point.cents - candidate.cents) < 40;
       if(clarity >= JUMP_CLARITY_MIN && matchesCandidate){
@@ -928,7 +892,8 @@ function loopPitch(ts){
     state.jumpCandidate = null;
   }
 
-  // Median-of-3 smoothing: suppresses single-frame outlier spikes without blurring real pitch moves.
+  // Median-of-3 smoothing: suppresses single-frame outlier spikes (common with
+  // choppy/lossy mic audio, e.g. Bluetooth headset mics) without blurring real pitch moves.
   if(point.voiced){
     state.centsHistory.push(point.cents);
     if(state.centsHistory.length > 3) state.centsHistory.shift();
@@ -960,7 +925,7 @@ function updateReadout(point, rms, clarity){
     judgeEl.className=''; state.inTuneStreak=0; return;
   }
   hzEl.textContent = point.freq.toFixed(1)+' Hz';
-  const diff = point.cents - CENTS.seventh;
+  const diff = point.cents - CENTS.third;
   centsEl.textContent = (diff>=0?'+':'')+diff.toFixed(1)+' ¢';
   if(Math.abs(diff) <= TOLERANCE){
     judgeEl.textContent=t('judgeOk');
@@ -989,9 +954,9 @@ function resizeCanvas(){
 window.addEventListener('resize', resizeCanvas);
 
 function yFor(cents, H){
-  const lo=-20, hi=1150, pad=14; // extended range to comfortably fit the seventh (up to ~1088¢)
-  const frac=(cents-lo)/(hi-lo);
-  return H-pad-frac*(H-2*pad);
+  const lo=-20, hi=720, pad=14;
+  const t=(cents-lo)/(hi-lo);
+  return H-pad-t*(H-2*pad);
 }
 
 function drawChart(){
@@ -1004,14 +969,14 @@ function drawChart(){
 
   ctx2d.strokeStyle='rgba(234,242,241,0.055)';
   ctx2d.lineWidth=1*dpr;
-  for(let c=0;c<=1200;c+=100){
+  for(let c=0;c<=800;c+=100){
     const y=yFor(c,H);
     ctx2d.beginPath(); ctx2d.moveTo(0,y); ctx2d.lineTo(W,y); ctx2d.stroke();
   }
 
-  if(state.reveal.seventh){
-    const yHi=yFor(CENTS.seventh+TOLERANCE,H);
-    const yLo=yFor(CENTS.seventh-TOLERANCE,H);
+  if(state.reveal.third){
+    const yHi=yFor(CENTS.third+TOLERANCE,H);
+    const yLo=yFor(CENTS.third-TOLERANCE,H);
     ctx2d.fillStyle = state.inTuneStreak>10 ? 'rgba(51,209,122,0.20)' : 'rgba(232,163,61,0.11)';
     ctx2d.fillRect(0,yHi,W,yLo-yHi);
   }
@@ -1027,10 +992,9 @@ function drawChart(){
     ctx2d.fillText(label+(freqVal?('  '+freqVal.toFixed(1)+' Hz'):''), 8*dpr, y-4*dpr);
   }
   const f = state.freqs;
-  line(CENTS.root, '#EAF2F1', 3, t('chartRootLabel'), state.reveal.root, f&&f.root);
-  line(CENTS.third, '#8FD9C8', 3, t('chartThirdLabel'), state.reveal.third, f&&f.third);
-  line(CENTS.fifth, '#2FBFAA', 3, t('chartFifthLabel'), state.reveal.fifth, f&&f.fifth);
-  line(CENTS.seventh, '#E8A33D', 4.5, seventhChartLabel(), state.reveal.seventh, f&&f.seventh);
+  line(CENTS.root, '#EAF2F1', 3.5, t('chartRootLabel'), state.reveal.root, f&&f.root);
+  line(CENTS.fifth, '#2FBFAA', 3.5, t('chartFifthLabel'), state.reveal.fifth, f&&f.fifth);
+  line(CENTS.third, '#E8A33D', 4.5, thirdChartLabel(), state.reveal.third, f&&f.third);
 
   ctx2d.lineWidth=2.5*dpr;
   let started=false;
@@ -1041,12 +1005,13 @@ function drawChart(){
     const x = W - (n-i)*(W/TRACE_MAX);
     if(p.voiced){
       const y=yFor(p.cents,H);
-      const inTune = Math.abs(p.cents-CENTS.seventh) <= TOLERANCE;
+      const inTune = Math.abs(p.cents-CENTS.third) <= TOLERANCE;
       const color = inTune ? '#33D17A' : '#E2685A';
       if(!started || color!==lastColor){
         if(started) ctx2d.stroke();
         ctx2d.beginPath();
         ctx2d.strokeStyle=color;
+        // start new segment from previous point if available, so the line stays continuous
         if(i>0 && state.trace[i-1].voiced){
           const xp = W - (n-(i-1))*(W/TRACE_MAX);
           const yp = yFor(state.trace[i-1].cents,H);
@@ -1070,7 +1035,7 @@ function drawChart(){
     if(last.voiced){
       const x = W - 1*(W/TRACE_MAX);
       const y = yFor(last.cents,H);
-      ctx2d.fillStyle = Math.abs(last.cents-CENTS.seventh)<=TOLERANCE ? '#33D17A' : '#E2685A';
+      ctx2d.fillStyle = Math.abs(last.cents-CENTS.third)<=TOLERANCE ? '#33D17A' : '#E2685A';
       ctx2d.beginPath(); ctx2d.arc(x,y,5*dpr,0,Math.PI*2); ctx2d.fill();
     }
   }
